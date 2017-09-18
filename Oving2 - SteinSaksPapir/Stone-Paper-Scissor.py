@@ -83,26 +83,22 @@ class MestVanlig(Spiller):
         Spiller.__init__(self,spillernavn)
 
     def velg_aksjon(self,motstander):
-        stein = 0
-        saks = 0
-        papir = 0
+        antall_trekk = [0,0,0]
 
         if (len(Spiller.spiller_info[motstander])>0):
             for trekk in Spiller.spiller_info[motstander]:
-                if trekk.getAction() == 0: stein +=1
-                elif trekk.getAction() == 1: saks += 1
-                elif trekk.getAction() == 2: papir += 1
+                antall_trekk[trekk.getAction()] += 1
 
-        #motstander tatt flest stein, returner papir
-            if stein > papir and stein > papir: return Aksjon(2)
-
-        #motstander tatt flest saks, returner stein
-            if saks > stein and saks > papir: return Aksjon(0)
-
-        #motstander tatt flest papir, returner saks
-            if papir > stein and papir > saks: return Aksjon(1)
+        if antall_trekk != [0,0,0]:
+            return Aksjon(motsatt_trekk(antall_trekk.index(max(antall_trekk))))
 
         return Aksjon(random.randint(0,2))
+
+
+#Returnerer det motsatte trekket av det som blir sendt inn i funksjonen
+def motsatt_trekk(num):
+    a = {0: 2, 1: 0, 2: 1}
+    return a[num]
 
 
 class Historiker(Spiller):
@@ -113,20 +109,26 @@ class Historiker(Spiller):
 
     def velg_aksjon(self, motstander):
         historie = Spiller.spiller_info[motstander]
+
         subsequence = historie[-self.husk:]
 
-        score = [0,0,0] #Mest vanlig trekk etter sub_sekvens
-        for x in range(len(historie) - 1 - len(subsequence),-1,-1): #-len(sub) pga man trenger ikke regne med siste trekk
-            if historie[x] == subsequence[-1]:
-                if x - len(subsequence) < 0:
-                    break
-                if historie[x - len(subsequence) + 1:x + 1] != subsequence:
-                    break
-                score[historie[x + 1].getAction()] += 1
-        valg = motsatte(score.index(max(score)))
+        #[Stein, saks, papir]
+        neste_trekk = [0,0,0]
 
-        if score == [0,0,0]: return Aksjon(random.randint(0,2))
-        return Aksjon(valg)
+        for i in range(len(historie) - self.husk): #minus husk fordi vi må stoppe når vi har de husk-siste elementene i listen
+
+            #sjekker om det finnes en subsequence som er lik subsequencen med lengde husk
+            if historie[i:i+self.husk] == subsequence:
+
+                #Dersom neste_trekk etter subsequence, plusser på tilsvarende plass i listen
+                neste_trekk[historie[i+self.husk].getAction()] += 1
+
+
+        # OBS: Velger første og største i listen, ikke det største trekket som ble gjort sist
+        if neste_trekk != [0,0,0]:
+            return Aksjon(motsatt_trekk(neste_trekk.index(max(neste_trekk))))
+
+        return Aksjon(random.randint(0,2))
 
 
 # __init__ (self, spiller1, spiller2): Initiere en instans av klassen, der spiller1 og spiller2 er de to spillerne.
@@ -239,20 +241,12 @@ class MangeSpill:
 
 
 
-
-
-
-def motsatte(num):
-    a = {0: 2, 1: 0, 2: 1}
-    return a[num]
-
-
 def main():
     spiller1 = Tilfeldig("Henrik")
     spiller2 = Sekvensiell("Kristoffer")
     spiller3 = MestVanlig("Martin")
     spiller4 = Historiker("Vilde",2)
-    spill = MangeSpill(spiller4,spiller3,100)
+    spill = MangeSpill(spiller4,spiller2,100)
     spill.arranger_turnering()
 
 
