@@ -1,15 +1,8 @@
-# This file provides a few of the 'tricky' elements of the Morse Code project: those
-# involving setting up and reading from the serial port.
-
-# IMPORTANT!! If you are a MAC user, you will need to modify the actual device code for
-# your serial port in arduino_connect.py '''
 
 from Morse import arduino_connect  # This is the key import so that you can access the serial port.
-#1000
-#111
-#01
-#1
-# Codes for the 5 signals sent to this level from the Arduino
+
+__author__ = "Henrik Høiness"
+# Codes for the 3 signals sent to this level from the Arduino
 
 serial_port = 9600
 _dot = 1

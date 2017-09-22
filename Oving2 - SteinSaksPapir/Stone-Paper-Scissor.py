@@ -1,5 +1,6 @@
 import random
 import matplotlib.pyplot as plt
+__author__ = "Henrik Høiness"
 
 
 class Aksjon:
