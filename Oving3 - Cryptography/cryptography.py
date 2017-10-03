@@ -336,15 +336,16 @@ class Hacker(Person):
         possible_keys = self.get_possibleKeys()
         if possible_keys == "wordbook":
             # Splicer bare for å ikke få med siste tomme linje i ordboken (mulig unødvendig)
-            possible_keys = self.wordbook[:109583]
+            possible_keys = self.wordbook
 
         print("Possible keys:")
+        self.wordbook = set(self.wordbook)
         for possible_key in possible_keys:
 
             # Dekoder den krypterte meldingen med hver mulige nøkkel
             decoded_text = self.cipher.decode(text,possible_key)
             for word in decoded_text.split():
-                if self.wordbook.__contains__(word):
+                if word in self.wordbook:
 
                     # Teller hvor mange treff i ordboken hver mulige nøkkel får
                     self.count[possible_keys.index(possible_key)] += 1
