@@ -3,6 +3,7 @@ import os
 import copy
 import math
 
+__author__ = "Henrik Høiness"
 
 class Reader:
 
