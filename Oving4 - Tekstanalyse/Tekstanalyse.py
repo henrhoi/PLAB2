@@ -7,33 +7,37 @@ __author__ = "Henrik Høiness"
 
 class Reader:
 
-    def __init__(self):
+    def __init__(self, trainpath, prune, stopword_path, n_grams):
         positive = []
         negative = []
-        pos_paths = os.listdir("data/alle/train/pos")
-        neg_paths = os.listdir("data/alle/train/neg")
+        self.n_grams = n_grams
+        pos_paths = os.listdir(trainpath+"/pos")
+        neg_paths = os.listdir(trainpath+"/neg")
+        self.stopword_path = stopword_path
+
 
         for path in pos_paths:
-            positive += self.file_to_list("data/alle/train/pos/"+path)
+            positive += self.file_to_list(trainpath+"/pos/"+path)
 
         for path in neg_paths:
-            negative += self.file_to_list("data/alle/train/neg/"+path)
+            negative += self.file_to_list(trainpath+"/neg/"+path)
 
         self.positive_wordCount = self.countOccurances(positive)
         self.negative_wordCount = self.countOccurances(negative)
 
         total_words = positive + negative
-        self.pruning(0.0000001, total_words)
+        self.pruning(prune, total_words)
 
         self.pos_infoValues = self.informative_words(True)
         self.neg_infoValues = self.informative_words(False)
+
 
 
     # Del 1 og 3
     def file_to_list(self,filename):
         text = ""
         file = open(filename, encoding ='utf-8')
-        stop_file = open("./data/stop_words.txt", encoding ='utf-8')
+        stop_file = open(self.stopword_path, encoding ='utf-8')
         stop_words = set([word.rstrip('\n') for word in stop_file])
         stop_file.close()
 
@@ -41,7 +45,7 @@ class Reader:
             text += re.sub("[.,#+()-:?!&<´>/;'^*]", "", line.lower().rstrip('\n').replace('"', '').replace("!","").replace("br ",""))
         file.close()
 
-        words = self.n_gram(text.split())
+        words = self.n_gram(text.split(),self.n_grams)
         return list(set([word for word in words if word not in stop_words]))
 
 
@@ -59,11 +63,11 @@ class Reader:
 
     # Del 2
     # Returnerer mest populære ord
-    def most_popular(self, dict):
+    def most_popular(self, dict, number):
         wordCount = copy.deepcopy(dict)
         popular_words = []
 
-        for i in range(25):
+        for i in range(number):
             max_key = max(wordCount, key=wordCount.get)
             wordCount[max_key] = 0
             popular_words.extend([max_key])
@@ -118,15 +122,19 @@ class Reader:
                 pass
 
     # Del 6: n-gram
-    def n_gram(self, list):
+    def n_gram(self, in_list, n):
         n_list = []
-        for i in range(len(list)-2):
-            word1 = list[i]+"_"+list[i+1]
-            word2 = list[i]+"_"+list[i+1]+"_"+list[i+2]
-            n_list.append(word1)
-            n_list.append(word2)
+        for k in range(len(n)):
+            for i in range(len(in_list)-n[k]):
+                word = ""
+                j = 0
+                while j < n[k]:
+                    word += in_list[i+j]
+                    word += "_"
+                    j += 1
+                n_list.append(word[:-1])
 
-        return list+n_list
+        return in_list+n_list
 
     # Information value of all words
     def informative_words(self, type):
@@ -145,13 +153,12 @@ class Reader:
 # Del 7 - 9
 class ClassificationSystem:
 
-    def __init__(self):
-        self.reader = Reader()
+    def __init__(self, trainpath, prune, stopword_path, n_grams):
+        self.reader = Reader(trainpath, prune, stopword_path, n_grams)
 
     # filename = path to a file containing a movie review
-    def get_type(self, filename):
+    def get_type(self, filename, e):
         words = self.reader.file_to_list(filename)
-        #print(words)
         pos_sum = 0
         neg_sum = 0
         for word in words:
@@ -161,14 +168,14 @@ class ClassificationSystem:
 
             if word not in self.reader.pos_infoValues:
                 # "Straffer" positive dersom det ikke inneholder ordet
-                pos_sum += math.log(0.0005)
+                pos_sum += math.log(e)
 
             if word in self.reader.neg_infoValues:
                     neg_sum += math.log(self.reader.neg_infoValues[word])
 
             if word not in self.reader.neg_infoValues:
                 # "Straffer" positive dersom det ikke inneholder ordet
-                neg_sum += math.log(0.0005)
+                neg_sum += math.log(e)
 
         # returns True if positive and False if negative
         return pos_sum > neg_sum
@@ -176,19 +183,23 @@ class ClassificationSystem:
 
 
 def main():
-    c = ClassificationSystem()
+    # Her kan jeg endre hvordan klassifikasjonssystemet skal fungere. Kan velge treningsfiler, stoppord og n-gram i
+    # klassifiseringen av ord. Prune-verdien går på prosentandelen til ordet i summen av alle dokumenter.
+    trainpath = "data/alle/train";      prune= 0.0000001;    stopword_path = "./data/stop_words.txt";  n_grams = [2,3,4,5]
+    c = ClassificationSystem(trainpath, prune, stopword_path, n_grams)
 
     pos_paths = os.listdir("data/alle/test/pos")
     neg_paths = os.listdir("data/alle/test/neg")
     pos_correct = 0
     neg_correct = 0
+    e = 0.0005
 
     for path in pos_paths:
-        if c.get_type("data/alle/test/pos/"+path) == True:
+        if c.get_type("data/alle/test/pos/"+path, e) == True:
             pos_correct += 1
 
     for path in neg_paths:
-        if c.get_type("data/alle/test/neg/"+path) == False:
+        if c.get_type("data/alle/test/neg/"+path, e) == False:
             neg_correct += 1
 
     print("Correctness:")
