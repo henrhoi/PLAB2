@@ -186,7 +186,7 @@ def main():
     # Her kan jeg endre hvordan klassifikasjonssystemet skal fungere. Kan velge treningsfiler, stoppord og n-gram i
     # klassifiseringen av ord. Prune-verdien går på prosentandelen til ordet i summen av alle dokumenter.
 
-    trainpath = "data/alle/train";      prune= 0.0000001;    stopword_path = "./data/stop_words.txt";  n_grams = [2,3,4,5,6,7,8,9]
+    trainpath = "data/alle/train";      prune= 0.0000001;    stopword_path = "./data/stop_words.txt";  n_grams = [2,3,4,5]
     c = ClassificationSystem(trainpath, prune, stopword_path, n_grams)
 
     pos_paths = os.listdir("data/alle/test/pos")
