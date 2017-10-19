@@ -238,9 +238,9 @@ class Artwork:
 
 def main():
 
-    fid1 = 'images/kdfinger.jpeg'
+    fid1 = 'images/kdfinger.gif'
     fid2 = 'images/einstein.jpeg'
-    fid3 = 'images/tunnel.jpeg'
+    fid3 = 'images/stairs.gif'
 
     artwork = Artwork(fid1,fid2,fid3,200)
     artwork.makeMasterPiece()
