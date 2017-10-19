@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a6e749bf-a2aa-4587-b9c9-677786f26bc9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Oving4 - Tekstanalyse/Tekstanalyse.py" afterPath="$PROJECT_DIR$/Oving4 - Tekstanalyse/Tekstanalyse.py" />
-    </list>
+    <list default="true" id="a6e749bf-a2aa-4587-b9c9-677786f26bc9" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +14,8 @@
       <file leaf-file-name="Tekstanalyse.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Oving4 - Tekstanalyse/Tekstanalyse.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="194" column="19" lean-forward="true" selection-start-line="194" selection-start-column="19" selection-end-line="194" selection-end-column="19" />
+            <state relative-caret-position="92">
+              <caret line="188" column="26" lean-forward="false" selection-start-line="188" selection-start-column="26" selection-end-line="188" selection-end-column="26" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -87,6 +83,19 @@
               <item name="PLAB2" type="b2602c69:ProjectViewProjectNode" />
               <item name="PLAB2" type="462c0819:PsiDirectoryNode" />
               <item name="Oving4 - Tekstanalyse" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLAB2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLAB2" type="462c0819:PsiDirectoryNode" />
+              <item name="Oving4 - Tekstanalyse" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLAB2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLAB2" type="462c0819:PsiDirectoryNode" />
+              <item name="Oving4 - Tekstanalyse" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="alle" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -307,8 +316,8 @@
     <entry file="file://$PROJECT_DIR$/Oving4 - Tekstanalyse/test.py" />
     <entry file="file://$PROJECT_DIR$/Oving4 - Tekstanalyse/Tekstanalyse.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="194" column="19" lean-forward="true" selection-start-line="194" selection-start-column="19" selection-end-line="194" selection-end-column="19" />
+        <state relative-caret-position="92">
+          <caret line="188" column="26" lean-forward="false" selection-start-line="188" selection-start-column="26" selection-end-line="188" selection-end-column="26" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
