@@ -2,6 +2,8 @@ from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageEnhance
 
+__author__ = "Henrik Høiness"
+
 
 class Imager():
 
