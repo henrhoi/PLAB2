@@ -1,7 +1,10 @@
 from PIL import Image
+# bruker i filter()
 from PIL import ImageFilter
+# brukes i scale, men bruker ikke metoden
 from PIL import ImageEnhance
-
+# bruker i invert()
+from PIL import ImageOps
 __author__ = "Henrik Høiness"
 
 
@@ -21,6 +24,7 @@ class Imager():
         if self.fid: self.load_image()
         if self.image: self.get_image_dims()
         else: self.image = self.gen_plain_image(self.xmax,self.ymax,background)
+
 
     # Load image from file
     def load_image(self):
@@ -66,6 +70,7 @@ class Imager():
         return self.resize(round(xfactor*self.xmax),round(yfactor*self.ymax))
 
     def get_pixel(self,x,y): return self.image.getpixel((x,y))
+
     def set_pixel(self,x,y,rgb): self.image.putpixel((x,y),rgb)
 
     def combine_pixels(self,p1,p2,alpha=0.5):
@@ -170,37 +175,30 @@ class Imager():
     def mortun(self,im2,levels=5,scale=0.75):
         return self.tunnel(levels,scale).morph4(im2.tunnel(levels,scale))
 
-### *********** TESTS ************************
 
-# Note: the default file paths for these examples are for unix!
+    # LEGGE PÅ FILTER
 
-def ptest1(fid1='images/kdfinger.jpeg', fid2="images/einstein.jpeg",steps=5,newsize=250):
-    im1 = Imager(fid1); im2 = Imager(fid2)
-    im1 = im1.resize(newsize,newsize); im2 = im2.resize(newsize,newsize)
-    roll = im1.morphroll(im2,steps=steps)
-    roll.display()
-    return roll
+    _filter_ = {"gaussianblur":ImageFilter.GaussianBlur,
+            "boxblur":ImageFilter.BoxBlur,
+            "unsharp":ImageFilter.UnsharpMask,
+            "kernel":ImageFilter.Kernel,
+            "rankfilter":ImageFilter.RankFilter,
+            "medianfilter":ImageFilter.MedianFilter,
+            "minfilter":ImageFilter.MinFilter,
+            "maxfilter":ImageFilter.MaxFilter,
+            "modefilter":ImageFilter.ModeFilter}
 
-def ptest2(fid1='images/einstein.jpeg',outfid='images/tunnel.jpeg',levels=3,newsize=250,scale=0.8):
-    im1 = Imager(fid1);
-    im1 = im1.resize(newsize,newsize);
-    im2 = im1.tunnel(levels=levels,scale=scale)
-    im2.display()
-    im2.dump_image(outfid)
-    return im2
 
-def ptest3(fid1='images/kdfinger.jpeg', fid2='images/kdfinger.jpeg',newsize=250,levels=4,scale=0.75):
-    im1 = Imager(fid1); im2 = Imager(fid2)
-    im1 = im1.resize(newsize,newsize); im2 = im2.resize(newsize,newsize)
-    box = im1.mortun(im2,levels=levels,scale=scale)
-    box.display()
-    return box
 
-def reformat(in_fid, out_ext='jpeg',scalex=1.0,scaley=1.0):
-    base, extension = in_fid.split('.')
-    im = Imager(in_fid)
-    im = im.scale(scalex,scaley)
-    im.dump_image(base,out_ext)
+    def xBlur(self,blur,image=False,radius=8):
+        image = image if image else self.image
+        f = self._filter_[blur](radius)
+        return Imager(image = image.filter(f))
+
+    def invert(self,image=False):
+        image = image if image else self.image
+        image = ImageOps.invert(image)
+        return Imager(image=image)
 
 
 class Artwork:
@@ -208,44 +206,60 @@ class Artwork:
     def __init__(self, fid1, fid2, fid3, new_size):
         self.img1 = Imager(fid1).resize(new_size,new_size)
         self.img1.rotate(12)
+        self.img1 = self.img1.scale_colors()
         self.img2 = Imager(fid2).resize(new_size,new_size)
         self.img3 = Imager(fid3).resize(new_size,new_size)
         self.size = new_size
 
     def doSomethingArtistic(self,img1, img2,levels,scale):
+        # Roterer 90 grader
         img1.rotate(90)
+        # "Tunnelerer" bildet
         img1 = img1.tunnel(levels=levels,scale=scale)
+        # Lager collage, fra bilde1 til bilde2
         img3 = img1.mortun(img2,levels=1,scale=scale)
         return img3
 
-    def fixSomeColors(self,img1,img2):
+    def RnB_collage(self,img1,img2):
+        # Fikser litt på farger og gjør et rødt og blått
         img3 = img1.map_color_wta()
+        # Lager collage, der bilde1 og bilde2 smelter sammen
         img3 = img3.morph4(img2)
         return img3
 
-    def doSomething2(self,img1,img2):
-        img1 = img1.map_color_wta()
-        img3 = self.doSomethingArtistic(img1,img2,4,0.7)
-        return img3
+    # def doSomething2(self,img1,img2):
+    #     # Fikser litt på farger og gjør det rødt og blått
+    #     img1 = img1.map_color_wta()
+    #     # Kaller på en annen metode som fikser på bildene
+    #     #img3 = self.doSomethingArtistic(img1,img2,4,0.7)
+    #     return img1
 
+
+    #Metode som generer ferdig bilde, som bruker hjelpefunskjonene over
     def makeMasterPiece(self):
-        a = self.fixSomeColors(self.img1,self.img2)
+        self.img1 = self.img1.xBlur("gaussianblur")
+        self. img3 = self.img3.invert()
+        a = self.RnB_collage(self.img1,self.img2)
         b = self.doSomethingArtistic(a.resize(self.size, self.size),self.img3,4,0.9)
-        c = self.doSomething2(a,b)
+        c = b.map_color_wta()
+        #Roterer bildet 45
         c.rotate(45)
-        d = self.fixSomeColors(c,c)
-        d.display()
-        return d
+        c.display()
+        return c
 
 
 def main():
 
-    fid1 = 'images/kdfinger.gif'
-    fid2 = 'images/einstein.jpeg'
-    fid3 = 'images/stairs.gif'
+    fid1 = 'images/fisheggs.jpeg'
+    fid2 = 'images/brain.jpeg'
+    fid3 = 'images/library.jpeg'
 
     artwork = Artwork(fid1,fid2,fid3,200)
     artwork.makeMasterPiece()
+
+
+
+
 
 
 main()
